@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vista de lista editable para product.pricelist con sus items -->
+    <record id="view_product_pricelist_tree_editable" model="ir.ui.view">
+        <field name="name">product.pricelist.tree.editable</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="editable">top</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista de formulario modificada para product.pricelist con tree editable -->
+    <record id="view_product_pricelist_form_mod" model="ir.ui.view">
+        <field name="name">product.pricelist.form.mod</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <!-- Reemplazar el campo item_ids con una vista tree editable -->
+            <xpath expr="//field[@name='item_ids']" position="replace">
+                <field name="item_ids" nolabel="1" context="{'default_base':'list_price'}">
+                    <tree editable="bottom" string="Reglas de Precio">
+                        <field name="applied_on" string="Aplicable en"/>
+                        <field name="product_categ_id" 
+                               string="Categoría de Producto"
+                               invisible="applied_on not in ['2_product_category']"
+                               required="applied_on == '2_product_category'"/>
+                        <field name="product_tmpl_id" 
+                               string="Producto (Plantilla)"
+                               invisible="applied_on not in ['1_product']"
+                               required="applied_on == '1_product'"/>
+                        <field name="product_id" 
+                               string="Producto (Variante)"
+                               invisible="applied_on not in ['0_product_variant']"
+                               required="applied_on == '0_product_variant'"/>
+                        <field name="min_quantity" string="Cant. Mínima"/>
+                        <field name="date_start" optional="hide"/>
+                        <field name="date_end" optional="hide"/>
+                        <field name="compute_price" string="Cálculo"/>
+                        <field name="fixed_price" 
+                               string="Precio Fijo"
+                               invisible="compute_price != 'fixed'"
+                               required="compute_price == 'fixed'"/>
+                        <field name="percent_price" 
+                               string="Porcentaje"
+                               invisible="compute_price != 'percentage'"
+                               required="compute_price == 'percentage'"/>
+                        <field name="price_discount" 
+                               string="Descuento"
+                               invisible="compute_price not in ['formula']"
+                               optional="hide"/>
+                        <field name="price_surcharge" 
+                               string="Recargo"
+                               invisible="compute_price not in ['formula']"
+                               optional="hide"/>
+                        <field name="base" 
+                               string="Basado en"
+                               invisible="compute_price not in ['percentage', 'formula']"
+                               optional="hide"/>
+                        <field name="currency_id" column_invisible="1"/>
+                        <field name="partner_id" string="Cliente" optional="show"/>
+                        <field name="company_id" column_invisible="1"/>
+                    </tree>
+                </field>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista de lista para product.pricelist.item independiente -->
+    <record id="view_product_pricelist_item_tree_editable" model="ir.ui.view">
+        <field name="name">product.pricelist.item.tree.editable</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom" string="Items de Lista de Precios">
+                <field name="pricelist_id" string="Lista de Precios"/>
+                <field name="applied_on" string="Aplicable en"/>
+                <field name="product_categ_id" 
+                       string="Categoría de Producto"
+                       invisible="applied_on not in ['2_product_category']"
+                       required="applied_on == '2_product_category'"/>
+                <field name="product_tmpl_id" 
+                       string="Producto (Plantilla)"
+                       invisible="applied_on not in ['1_product']"
+                       required="applied_on == '1_product'"/>
+                <field name="product_id" 
+                       string="Producto (Variante)"
+                       invisible="applied_on not in ['0_product_variant']"
+                       required="applied_on == '0_product_variant'"/>
+                <field name="min_quantity" string="Cant. Mínima"/>
+                <field name="compute_price" string="Cálculo"/>
+                <field name="fixed_price" 
+                       string="Precio Fijo"
+                       invisible="compute_price != 'fixed'"
+                       required="compute_price == 'fixed'"/>
+                <field name="percent_price" 
+                       string="Porcentaje"
+                       invisible="compute_price != 'percentage'"
+                       required="compute_price == 'percentage'"/>
+                <field name="price_discount" string="Descuento" optional="hide"/>
+                <field name="price_surcharge" string="Recargo" optional="hide"/>
+                <field name="date_start" optional="hide"/>
+                <field name="date_end" optional="hide"/>
+                <field name="base" string="Basado en" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="partner_id" string="Cliente" optional="show"/>
+                <field name="company_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Acción y menú para acceder a los items de lista de precios -->
+    <record id="action_product_pricelist_item_editable" model="ir.actions.act_window">
+        <field name="name">Items de Lista de Precios</field>
+        <field name="res_model">product.pricelist.item</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_product_pricelist_item_tree_editable"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crear un nuevo item de lista de precios
+            </p>
+            <p>
+                Configure reglas de precios por producto, categoría o aplicación global.
+            </p>
+        </field>
+    </record>
+
+</odoo>

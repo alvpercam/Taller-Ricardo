@@ -21,6 +21,7 @@
         'views/account_move.xml',
         'views/partner.xml',
         'views/sale.xml',
+        'views/product_pricelist.xml',
     ],
     'demo': [],
     'installable': True,
