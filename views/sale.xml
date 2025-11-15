@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_order_form_taller" model="ir.ui.view">
+        <field name="name">sale.order.form.taller</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='partner_details']/field[@name='partner_id']" position="after">
+                <field name="telefono"/>
+                <field name="vehiculo"/>
+                <field name="client_order_ref" string="Matrícula"/>
+                <field name="recogido" string="Asistido"/>
+            </xpath>
+            <xpath expr="//group[@name='order_details']/field[@name='validity_date']" position="after">
+                <field name="date_invoice" string="Fecha de servicio"/>
+            </xpath>
+            <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="before">
+                <field name="referencia"/>
+            </xpath>
+            <xpath expr="//group[@name='note_group']//field[@name='note']" position="before">
+                <field name="comentarios" placeholder="(Lugar de recogida y entrega, ruta realizada, avería)"/>
+            </xpath>
+            <xpath expr="//group[@name='order_details']//div[@class='o_row']/field[@name='pricelist_id']" position="attributes">
+                <attribute name="widget">radio</attribute>
+                <attribute name="domain">[('partner_id', '=', partner_id)]</attribute>
+                <attribute name="string">Complemento</attribute>
+            </xpath>
+            <xpath expr="//page[@name='order_lines']/field[@name='order_line']" position="before">
+                <group>
+                    <group>
+                        <field name="categ_id" widget="radio" string="Acción"/>
+                        <field name="remolque" widget="radio" string="Tipo de vehículo" domain="[('categ_id', '=', categ_id)]"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal']" position="before">
+                <field name="pricelist_id"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="attributes">
+                <attribute name="domain">[('categ_id', '=', parent.remolque)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_template_id']" position="attributes">
+                <attribute name="domain">[('categ_id', '=', parent.remolque)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/form//field[@name='product_id']" position="attributes">
+                <attribute name="domain">[('categ_id', '=', parent.remolque)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_category_form_accion_view" model="ir.ui.view">
+        <field name="name">product.category.accion.form</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='parent_id']" position="before">
+                <field name="categ_id"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

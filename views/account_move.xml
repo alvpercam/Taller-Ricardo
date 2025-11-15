@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_move_form_taller" model="ir.ui.view">
+        <field name="name">account.move.form.taller</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="journal_id"
+                       domain="[('type', '=', 'sale'), ('company_id', '=', company_id)]"
+                       attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+                <field name="telefono" attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+                <field name="vehiculo" attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+                <field name="matricula" attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+                <field name="recogido" string="Asistido" attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_date']" position="after">
+                <field name="referencia" attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+                <field name="comentarios" placeholder="(Lugar de recogida y entrega, ruta realizada, avería)"
+                       attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']" position="before">
+                <group attrs="{'invisible': [('move_type', 'not in', ('out_invoice', 'out_refund'))]}">
+                    <group>
+                        <field name="pricelist_id" string="Complemento" widget="radio" domain="[('partner_id', '=', partner_id)]"/>
+                        <field name="categ_id" widget="radio" string="Acción"/>
+                        <field name="remolque" widget="radio" string="Tipo de vehículo" domain="[('categ_id', '=', categ_id)]"/>
+                    </group>
+                </group>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_subtotal']" position="before">
+                <field name="complemento"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='product_id']" position="attributes">
+                <attribute name="domain">[('categ_id', '=', parent.remolque)]</attribute>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/form//field[@name='product_id']" position="attributes">
+                <attribute name="domain">[('categ_id', '=', parent.remolque)]</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
